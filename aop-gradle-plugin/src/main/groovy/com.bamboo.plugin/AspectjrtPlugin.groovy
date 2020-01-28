@@ -1,5 +1,6 @@
-package com.bamboo.plugin;
+package com.bamboo.plugin
 
+import org.aspectj.bridge.IMessage;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -34,6 +35,24 @@ class AspectjrtPlugin implements Plugin<Project> {
                                  "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
                 MessageHandler handler = new MessageHandler(true)
                 new Main().run(args, handler)
+
+                def log = project.logger
+                for (IMessage message : handler.getMessages(null, true)) {
+                    switch (message.getKind()) {
+                        case IMessage.ABORT:
+                        case IMessage.ERROR:
+                        case IMessage.FAIL:
+                            log.error message.message, message.thrown
+                            break;
+                        case IMessage.WARNING:
+                        case IMessage.INFO:
+                            log.info message.message, message.thrown
+                            break;
+                        case IMessage.DEBUG:
+                            log.debug message.message, message.thrown
+                            break;
+                    }
+                }
             }
         }
     }

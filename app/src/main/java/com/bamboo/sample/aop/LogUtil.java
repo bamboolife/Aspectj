@@ -1,8 +1,10 @@
-package com.bamboo.sample;
+package com.bamboo.sample.aop;
 
 import com.bamboo.aspectj.FastAop;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
@@ -15,6 +17,7 @@ import java.lang.annotation.Target;
  */
 @FastAop
 @Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface LogUtil {
 
 }

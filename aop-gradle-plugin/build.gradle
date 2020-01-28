@@ -30,7 +30,7 @@ repositories {
 }
 
 
-version = "1.0.2"    //配置插件的版本号
+version = "1.0.3"    //配置插件的版本号
 group = "com.bamboo.plugin"   //插件的群组，插件的classpath会用到
 
 pluginBundle {

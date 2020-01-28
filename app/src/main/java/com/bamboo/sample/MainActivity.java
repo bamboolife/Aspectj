@@ -7,24 +7,16 @@ import android.util.Log;
 import android.view.View;
 
 import com.bamboo.fastaop.FastAop;
-import com.bamboo.fastaop.PointInterceptor;
-
-import org.aspectj.lang.ProceedingJoinPoint;
+import com.bamboo.sample.aop.AopLogin;
+import com.bamboo.sample.aop.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FastAop.init((clazz, joinPoint) -> {
-            try {
-                joinPoint.proceed();
-            } catch (Throwable throwable) {
-                throwable.printStackTrace();
-            }
-
-        });
         findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -32,12 +24,24 @@ public class MainActivity extends AppCompatActivity {
                 logPrintln();
             }
         });
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLogin();
+            }
+        });
     }
 
+    @AopLogin
+    private void onLogin() {
+        Log.i(TAG, "onLogin: ");
+    }
 
 
     @LogUtil
-    public void logPrintln(){
+    public void logPrintln() {
         Log.i(TAG, "intercept: 22222222222222");
     }
+
+
 }
