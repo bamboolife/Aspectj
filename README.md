@@ -6,7 +6,7 @@
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url "https://plugins.gradle.org/m2/" //发布插件的地址
         }
         maven { url 'https://jitpack.io' }
     }
@@ -16,7 +16,7 @@ buildscript {
 }
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }
+        maven { url 'https://jitpack.io' }  //发布项目的地址
     }
 }
 ```
