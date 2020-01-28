@@ -11,7 +11,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.2'
+        classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.2' //引用自定义插件
     }
 }
 allprojects {
