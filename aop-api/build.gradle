@@ -1,6 +1,14 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
+
+repositories {
+    mavenCentral()
+    google()
+    jcenter()
+    maven { url "https://jitpack.io" }
+}
 group='com.github.bamboolife'
+version = '1.0.0'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
@@ -36,7 +44,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     api 'org.aspectj:aspectjrt:1.8.14'
-    //implementation project(path: ':aop-compiler')
     api project(path: ':aop-annotation')
 
 }

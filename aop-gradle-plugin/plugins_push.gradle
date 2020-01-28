@@ -1,5 +1,3 @@
-//apply from: './plugins_push.gradle'  不知道引用错误
-
 // First, apply the publishing plugin
 buildscript {
     repositories {
@@ -47,5 +45,4 @@ pluginBundle {
         }
     }
 }
-
 
