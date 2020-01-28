@@ -6,7 +6,7 @@
 
 [![](https://jitpack.io/v/bamboolife/Aspectj.svg)](https://jitpack.io/#bamboolife/Aspectj)
 
-## 如何使用
+## 首先添加依赖
 1. 在根build.gradle中添加
 ```gradle
 buildscript {
@@ -34,4 +34,67 @@ dependencies {
     implementation 'com.github.bamboolife.Aspectj:aop-api:1.0.2'
     annotationProcessor 'com.github.bamboolife.Aspectj:aop-compiler:1.0.2'
 }
+```
+## 在项目中简单的使用
+```java
+public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        FastAop.init(new PointInterceptor() {
+            @Override
+            public void intercept(Class clazz, ProceedingJoinPoint joinPoint) {
+                try {
+                    if (clazz == LogUtil.class) {
+                        if (false) {//log开关
+                            joinPoint.proceed();
+                        }else{
+                            Toast.makeText(MainActivity.this,"log开关已经关闭",Toast.LENGTH_SHORT).show();
+                        }
+                    }else if(clazz==AopLogin.class){
+                        if (false){//如果已经登录
+                            joinPoint.proceed();
+                        }else {
+                            //提示用户
+                            Toast.makeText(MainActivity.this,"登录已经失效请重新登录",Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                } catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+            }
+        });
+        findViewById(R.id.text).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: 11111111111111111");
+                logPrintln();
+            }
+        });
+        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onLogin();
+            }
+        });
+    }
+
+    @AopLogin
+    private void onLogin() {
+        Log.i(TAG, "onLogin: ");
+    }
+
+
+    @LogUtil
+    public void logPrintln() {
+        Log.i(TAG, "intercept: 22222222222222");
+    }
+
+
+}
+
 ```
