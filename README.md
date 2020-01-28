@@ -1,5 +1,6 @@
 # Aspectj
 切面编程
+[![](https://jitpack.io/v/bamboolife/Aspectj.svg)](https://jitpack.io/#bamboolife/Aspectj)
 ##如何使用
 1. 在根build.gradle中添加
 ```java
@@ -8,7 +9,6 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/" //发布插件的地址
         }
-        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.2' //引用自定义插件
