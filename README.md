@@ -36,6 +36,7 @@ dependencies {
 }
 ```
 ## 在项目中简单的使用
+### 简单使用方式一
 ```java
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -96,5 +97,55 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
+```
+### 使用方式二（推荐此方式）
+在Application中初始，可以通过路由管理和eventbus来管理页面的跳转，所有需要处理的业务逻辑统一管理
+```java
+public class App extends Application {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        initFastAop();
+    }
+
+    private void initFastAop() {
+        FastAop.init(new AopHelper(this));
+    }
+
+}
+//-----------添加辅助类统一管理-------------------
+public class AopHelper implements PointInterceptor {
+    private Context mContext;
+
+    public AopHelper(Context context) {
+        this.mContext = context;
+    }
+
+    @Override
+    public void intercept(Class clazz, ProceedingJoinPoint joinPoint) {
+        try {
+            if (clazz == LogUtil.class) {
+                if (false) {//log开关
+                    joinPoint.proceed();
+                }else{
+                    Toast.makeText(mContext,"log开关已经关闭",Toast.LENGTH_SHORT).show();
+                }
+            }else if(clazz==AopLogin.class){
+                if (false){//如果已经登录
+                    joinPoint.proceed();
+                }else {
+                    //提示用户
+                    Toast.makeText(mContext,"登录已经失效请重新登录",Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+
+    }
+}
+
 
 ```
