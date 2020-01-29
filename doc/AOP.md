@@ -117,4 +117,226 @@ variants.all { variant ->
 - @AfterReturning(切点表达式)：返回通知，切点方法返回结果之后执行
 - @AfterThrowing(切点表达式)：异常通知，切点抛出异常时执行
 
+> @Pointcut、@Before、@Around、@After、@AfterReturning、@AfterThrowing需要在切面类中使用，即在使用@Aspect的类中。
+
+### 1）切点表达式是什么？
+
+这就是切点表达式：execution (* com.lqr..*.*(..))。切点表达式的组成如下：
+
+```java
+execution(<修饰符模式>? <返回类型模式> <方法名模式>(<参数模式>) <异常模式>?)
+```
+>除了返回类型模式、方法名模式和参数模式外，其它项都是可选的。
+修饰符模式指的是public、private、protected，异常模式指的是NullPointException等。
+
+对于切点表达式的理解需要多多理解，下面列出几个例子说明一下就好了：
+```java
+@Before("execution(public * *(..))")
+public void before(JoinPoint point) {
+    System.out.println("CSDN_LQR");
+}
+```
+
+>匹配所有public方法，在方法执行之前打印"CSDN_LQR"。
+
+```java
+@Around("execution(* *to(..))")
+public void around(ProceedingJoinPoint joinPoint) {
+    System.out.println("CSDN");
+    joinPoint.proceed();
+    System.out.println("LQR");
+}
+```
+> 匹配所有以"to"结尾的方法，在方法执行之前打印"CSDN"，在方法执行之后打印"LQR"。
+
+```java
+@After("execution(* com.lqr..*to(..))")
+public void after(JoinPoint point) {
+    System.out.println("CSDN_LQR");
+}
+```
+> 匹配com.lqr包下及其子包中以"to"结尾的方法，在方法执行之后打印"CSDN_LQR"。
+
+```java
+@AfterReturning("execution(int com.lqr.*(..))")
+public void afterReturning(JoinPoint point, Object returnValue) {
+    System.out.println("CSDN_LQR");
+}
+```
+> 匹配com.lqr包下所有返回类型是int的方法，在方法返回结果之后打印"CSDN_LQR"。
+```java
+@AfterThrowing(value = "execution(* com.lqr..*(..))", throwing = "ex")
+public void afterThrowing(Throwable ex) {
+    System.out.println("ex = " + ex.getMessage());
+}
+```
+> 匹配com.lqr包及其子包中的所有方法，当方法抛出异常时，打印"ex = 报错信息"。
+
+### 2）@Pointcut的使用
+
+@Pointcut是专门用来定义切点的，让切点表达式可以复用。
+你可能需要在切点执行之前和切点报出异常时做些动作（如：出错时记录日志），可以这么做：
+```java
+@Before("execution(* com.lqr..*(..))")
+public void before(JoinPoint point) {
+    System.out.println("CSDN_LQR");
+}
+
+@AfterThrowing(value = "execution(* com.lqr..*(..))", throwing = "ex")
+public void afterThrowing(Throwable ex) {
+    System.out.println("记录日志");
+}
+```
+
+可以看到，表达式是一样的，那要怎么重用这个表达式呢？这就需要用到@Pointcut注解了，@Pointcut注解是注解在一个空方法上的，如：
+
+```java
+@Pointcut("execution(* com.lqr..*(..))")
+public void pointcut() {}
+```
+
+这时，"pointcut()"就等价于"execution(* com.lqr..*(..))"，那么上面的代码就可以这么改了：
+
+```java
+@Before("pointcut()")
+public void before(JoinPoint point) {
+    System.out.println("CSDN_LQR");
+}
+
+@AfterThrowing(value = "pointcut()", throwing = "ex")
+public void afterThrowing(Throwable ex) {
+    System.out.println("记录日志");
+}
+```
+## 四、实战
+
+经过上面的学习，下面是时候实战一下了，这里我们来一个简单的例子。
+
+### 1、切点
+
+这是界面上一个按钮的点击事件，就是一个简单的方法而已，我们拿它来试刀。
+```java
+public void test(View view) {
+    System.out.println("Hello, I am CSDN_LQR");
+}
+```
+### 2、切面类
+
+要织入一段代码到目标类方法的前前后后，必须要有一个切面类，下面就是切面类的代码：
+```java
+@Aspect
+public class TestAnnoAspect {
+
+    @Pointcut("execution(* com.lqr.androidaopdemo.MainActivity.test(..))")
+    public void pointcut() {
+
+    }    
+
+    @Before("pointcut()")
+    public void before(JoinPoint point) {
+        System.out.println("@Before");
+    }
+
+    @Around("pointcut()")
+    public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println("@Around");
+    }
+
+    @After("pointcut()")
+    public void after(JoinPoint point) {
+        System.out.println("@After");
+    }
+
+    @AfterReturning("pointcut()")
+    public void afterReturning(JoinPoint point, Object returnValue) {
+        System.out.println("@AfterReturning");
+    }
+
+    @AfterThrowing(value = "pointcut()", throwing = "ex")
+    public void afterThrowing(Throwable ex) {
+        System.out.println("@afterThrowing");
+        System.out.println("ex = " + ex.getMessage());
+    }
+}
+```
+### 3、各通知的执行结果
+
+先来试试看，这几个注解的执行结果如何。
+
+### 4、方法耗时计算的实现
+因为@Around是环绕通知，可以在切点的前后分别执行一些操作，AspectJ为了能肯定操作是在切点前还是在切点后，所以在@Around通知中需要手动执行joinPoint.proceed()来确定切点已经执行，故在joinPoint.proceed()之前的代码会在切点执行前执行，在joinPoint.proceed()之后的代码会切点执行后执行。于是，方法耗时计算的实现就是这么简单：
+```java
+@Around("pointcut()")
+public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+    long beginTime = SystemClock.currentThreadTimeMillis();
+    joinPoint.proceed();
+    long endTime = SystemClock.currentThreadTimeMillis();
+    long dx = endTime - beginTime;
+    System.out.println("耗时：" + dx + "ms");
+}
+```
+### 5、JoinPoint的作用
+发现没有，上面所有的通知都会至少携带一个JointPoint参数，这个参数包含了切点的所有信息，下面就结合按钮的点击事件方法test()来解释joinPoint能获取到的方法信息有哪些：
+
+```java
+MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+String name = signature.getName(); // 方法名：test
+Method method = signature.getMethod(); // 方法：public void com.lqr.androidaopdemo.MainActivity.test(android.view.View)
+Class returnType = signature.getReturnType(); // 返回值类型：void
+Class declaringType = signature.getDeclaringType(); // 方法所在类名：MainActivity
+String[] parameterNames = signature.getParameterNames(); // 参数名：view
+Class[] parameterTypes = signature.getParameterTypes(); // 参数类型：View
+```
+### 6、注解切点
+前面的切点表达式结构是这样的：
+
+execution(<修饰符模式>? <返回类型模式> <方法名模式>(<参数模式>) <异常模式>?)
+但实际上，上面的切点表达式结构并不完整，应该是这样的：
+
+execution(<@注解类型模式>? <修饰符模式>? <返回类型模式> <方法名模式>(<参数模式>) <异常模式>?)
+这就意味着，切点可以用注解来标记了。
+
+#### 1）自定义注解
+如果用注解来标记切点，一般会使用自定义注解，方便我们拓展。
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface TestAnnoTrace {
+    String value();
+    int type();
+}
+```
+- @Target(ElementType.METHOD)：表示该注解只能注解在方法上。如果想类和方法都可以用，那可以这么写@Target({ElementType.METHOD,ElementType.TYPE})，依此类推。
+- @Retention(RetentionPolicy.RUNTIME)：表示该注解在程序运行时是可见的（还有SOURCE、CLASS分别指定注解对于那个级别是可见的，一般都是用RUNTIME）。
+
+其中的value和type是自己拓展的属性，方便存储一些额外的信息。
+
+#### 2）使用自定义注解标记切点
+这个自定义注解只能注解在方法上（构造方法除外，构造方法也叫构造器，需要使用ElementType.CONSTRUCTOR），像平常使用其它注解一样使用它即可：
+
+```java
+@TestAnnoTrace(value = "lqr_test", type = 1)
+public void test(View view) {
+    System.out.println("Hello, I am CSDN_LQR");
+}
+```
+#### 3）注解的切点表达式
+既然用注解来标记切点，那么切点表达式肯定是有所不同的，要这么写：
+```java
+@Pointcut("execution(@com.lqr.androidaopdemo.TestAnnoTrace * *(..))")
+public void pointcut() {}
+```
+> 切点表达式使用注解，一定是@+注解全路径，如：@com.lqr.androidaopdemo.TestAnnoTrace。
+
+
+#### 4）获取注解属性值
+上面在编写自定义注解时就声明了两个属性，分别是value和type，而且在使用该注解时也都为之赋值了，那怎么在通知中获取这两个属性值呢？还记得JoinPoint这个参数吧，它就可以获取到注解中的属性值，如下所示：
+```java
+MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+Method method = signature.getMethod();
+// 通过Method对象得到切点上的注解
+TestAnnoTrace annotation = method.getAnnotation(TestAnnoTrace.class);
+String value = annotation.value();
+int type = annotation.type();
+```
 
