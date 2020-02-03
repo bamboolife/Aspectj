@@ -4,8 +4,10 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.bamboo.fastaop.PointInterceptor;
+import com.bamboo.testlibrary.Test;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.w3c.dom.Text;
 
 /**
  * 项目名称：aop-sample
@@ -39,6 +41,12 @@ public class AopHelper implements PointInterceptor {
                     Toast.makeText(mContext,"登录已经失效请重新登录",Toast.LENGTH_SHORT).show();
                 }
 
+            }else if(clazz== Test.class){
+                if (false){
+                    joinPoint.proceed();
+                }else{
+                    Toast.makeText(mContext,"module拦截成功",Toast.LENGTH_SHORT).show();
+                }
             }
         } catch (Throwable throwable) {
             throwable.printStackTrace();

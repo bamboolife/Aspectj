@@ -1,6 +1,10 @@
 package com.bamboo.plugin
 
-import org.aspectj.bridge.IMessage;
+import com.android.build.gradle.AppPlugin
+import com.android.build.gradle.LibraryPlugin
+import com.android.build.gradle.api.BaseVariant
+import org.aspectj.bridge.IMessage
+import org.gradle.api.DomainObjectCollection;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.JavaCompile;
@@ -11,19 +15,24 @@ import org.aspectj.tools.ajc.Main
 /**
  * 项目名称：aop-sample
  *
- * @Author bamboolife
- * 邮箱：core_it@163.com
+ * @Author bamboolife* 邮箱：core_it@163.com
  * 创建时间：2020-01-28 12:07
  * 描述：
  */
 class AspectjrtPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
+        if (project.plugins.hasPlugin(AppPlugin)){
+              applyAndroid(project,(DomainObjectCollection<BaseVariant>)project.android.applicationVariants)
+        }else if(project.plugins.hasPlugin(LibraryPlugin)){
+              applyAndroid(project, (DomainObjectCollection<BaseVariant>) project.android.libraryVariants)
+        }else{
+            throw new IllegalArgumentException('Aspectjrt gradle plugin only works in with Android module.')
+        }
 
-        project.android.applicationVariants.all { variant ->
-            if (!variant.buildType.isDebuggable()) {
-                return
-            }
+    }
+    static void applyAndroid(Project project, DomainObjectCollection<BaseVariant> variants) {
+        variants.all { variant ->
             JavaCompile javaCompile = variant.getJavaCompileProvider().get()
             javaCompile.doLast {
                 String[] args = ["-showWeaveInfo",
@@ -43,14 +52,14 @@ class AspectjrtPlugin implements Plugin<Project> {
                         case IMessage.ERROR:
                         case IMessage.FAIL:
                             log.error message.message, message.thrown
-                            break;
+                            break
                         case IMessage.WARNING:
                         case IMessage.INFO:
                             log.info message.message, message.thrown
-                            break;
+                            break
                         case IMessage.DEBUG:
                             log.debug message.message, message.thrown
-                            break;
+                            break
                     }
                 }
             }

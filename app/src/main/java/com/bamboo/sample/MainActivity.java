@@ -2,6 +2,7 @@ package com.bamboo.sample;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.view.View;
 import com.bamboo.fastaop.FastAop;
 import com.bamboo.sample.aop.AopLogin;
 import com.bamboo.sample.aop.LogUtil;
+import com.bamboo.testlibrary.TestActivity;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -28,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 onLogin();
+                Intent intent=new Intent(MainActivity.this, TestActivity.class);
+                startActivity(intent);
             }
         });
     }

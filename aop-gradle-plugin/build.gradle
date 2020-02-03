@@ -1,6 +1,6 @@
-//apply from: './plugins_push.gradle'  不知道引用错误
-
-// First, apply the publishing plugin
+//apply from: './plugins_push.gradle'  //不知道引用错误
+//apply from: './maven_local.gradle'
+ //First, apply the publishing plugin
 buildscript {
     repositories {
         maven {
@@ -8,29 +8,30 @@ buildscript {
         }
     }
     dependencies {
-        classpath "com.gradle.publish:plugin-publish-plugin:0.9.10"
+        classpath "com.gradle.publish:plugin-publish-plugin:0.10.1"
         //这里根据插件需要，添加对应的依赖
-        classpath 'org.aspectj:aspectjtools:1.8.14'
-        classpath 'org.aspectj:aspectjweaver:1.8.14'
+       // classpath 'org.aspectj:aspectjtools:1.8.14'
+        //classpath 'org.aspectj:aspectjweaver:1.8.14'
     }
 }
 
 apply plugin: "com.gradle.plugin-publish"
 apply plugin: 'groovy'
-//apply plugin: 'maven'
+
 dependencies {
     compileOnly gradleApi() //gradle sdk
     compileOnly localGroovy() //groovy sdk
     //这里根据插件需要，添加对应的依赖
     implementation 'org.aspectj:aspectjtools:1.8.14'
     implementation 'org.aspectj:aspectjweaver:1.8.14'
+    implementation 'com.android.tools.build:gradle:3.5.3'
 }
 repositories {
     jcenter()
 }
 
 
-version = "1.0.3"    //配置插件的版本号
+version = "1.0.6"    //配置插件的版本号
 group = "com.bamboo.plugin"   //插件的群组，插件的classpath会用到
 
 pluginBundle {

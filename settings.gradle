@@ -1,2 +1,2 @@
-include ':app', ':aop-annotation', ':aop-compiler', ':aop-api', ':aop-gradle-plugin'
+include ':app', ':aop-annotation', ':aop-compiler', ':aop-api', ':aop-gradle-plugin', ':testlibrary'
 rootProject.name='aop-sample'

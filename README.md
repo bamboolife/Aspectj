@@ -9,16 +9,16 @@
 buildscript {
     repositories {
         maven {
-            url "https://plugins.gradle.org/m2/" //发布插件的地址
+            url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
-        classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.2' //引用自定义插件
+        classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.6'
     }
 }
 allprojects {
     repositories {
-        maven { url 'https://jitpack.io' }  //发布项目的地址
+        maven { url 'https://jitpack.io' }
     }
 }
 ```
