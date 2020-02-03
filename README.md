@@ -12,28 +12,16 @@
 buildscript {
     repositories {
         maven {
-<<<<<<< HEAD
             url "https://plugins.gradle.org/m2/"
         }
     }
     dependencies {
         classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.6'
-=======
-            url "https://plugins.gradle.org/m2/" 
-        }
-    }
-    dependencies {
-        classpath 'gradle.plugin.com.bamboo.plugin:aop-gradle-plugin:1.0.3' 
->>>>>>> e8bcef0d1097e0f858f089475fcfa4cc5c0993ee
     }
 }
 allprojects {
     repositories {
-<<<<<<< HEAD
         maven { url 'https://jitpack.io' }
-=======
-        maven { url 'https://jitpack.io' }  
->>>>>>> e8bcef0d1097e0f858f089475fcfa4cc5c0993ee
     }
 }
 ```
